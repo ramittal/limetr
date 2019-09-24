@@ -12,13 +12,13 @@ class LinearMap:
     """Linear map class, conduct dot product when do not have function form
     only support matrix vector multiplication
     """
-    def __init__(self, shape, mv_dot, trans_mv_dot=None):
+    def __init__(self, shape, mv, trans_mv=None):
         self.shape = shape
-        self.mv_dot = mv_dot
-        self.trans_mv_dot = trans_mv_dot
+        self.mv = mv
+        self.trans_mv = trans_mv
 
     def dot(self, x):
-        return self.mv_dot(x)
+        return self.mv(x)
 
     @property
     def mat(self):
@@ -27,12 +27,12 @@ class LinearMap:
 
     @property
     def T(self):
-        if self.trans_mv_dot is None:
+        if self.trans_mv is None:
             return None
         else:
             return LinearMap((self.shape[1], self.shape[0]),
-                             self.trans_mv_dot,
-                             trans_mv_dot=self.mv_dot)
+                             self.trans_mv,
+                             trans_mv=self.mv)
 
 
 class SmoothFunction:

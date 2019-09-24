@@ -35,9 +35,6 @@ class Uniform:
         self.ub = ub
         self.size = lb.size
 
-        self.mean = 0.5*(self.lb + self.ub)
-        self.sd = (self.ub - self.lb)/np.sqrt(12.0)
-
     def check(self):
         assert type(self.lb) == np.ndarray
         assert type(self.ub) == np.ndarray

@@ -17,6 +17,9 @@ wheels/
 *.egg
 MANIFEST
 
+# pytest cache
+.pytest_cache
+
 # pycache
 __pycache__
 
