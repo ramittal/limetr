@@ -16,34 +16,31 @@ distr_list = [
 
 class Gaussian:
     def __init__(self, mean, sd):
-        # check the input type
-        assert type(mean) == np.ndarray
-        assert type(sd) == np.ndarray
-        # check the input size
-        assert mean.size == sd.size
-        assert mean.ndim == 1
-        assert sd.ndim == 1
-        # check standard deviation non-negative
-        assert np.all(sd >= 0.0)
-        # pass in data
         self.mean = mean
         self.sd = sd
         self.size = mean.size
 
+    def check(self):
+        assert type(self.mean) == np.ndarray
+        assert type(self.sd) == np.ndarray
+        assert self.mean.size == self.sd.size
+        assert self.mean.ndim == 1
+        assert self.sd.ndim == 1
+        assert np.all(self.sd >= 0.0)
+
 
 class Uniform:
     def __init__(self, lb, ub):
-        # check the input type
-        assert type(lb) == np.ndarray
-        assert type(ub) == np.ndarray
-        # check the input size
-        assert lb.size == ub.size
-        # check lower bound smaller than the upper bound
-        assert np.all(lb <= ub)
-        # pass in data
         self.lb = lb
         self.ub = ub
         self.size = lb.size
-        # compute mean and sd
+
         self.mean = 0.5*(self.lb + self.ub)
         self.sd = (self.ub - self.lb)/np.sqrt(12.0)
+
+    def check(self):
+        assert type(self.lb) == np.ndarray
+        assert type(self.ub) == np.ndarray
+        assert self.lb.size == self.ub.size
+        assert np.all(self.lb <= self.ub)
+
