@@ -63,19 +63,26 @@ def test_create_negative_uniform_distr(size):
     assert np.all(udistr.ub == 0.0)
 
 
+@pytest.mark.parametrize("size", [5, 0])
 def test_create_positive_uniform_direct_prior(size):
     uprior = utils.create_positive_uniform_direct_prior(size)
-    assert uprior.prior_type == "direct_prior"
-    assert uprior.fun is None
-    assert isinstance(uprior.distr, limetr.stats.Uniform)
-    assert np.all(uprior.distr.lb == 0.0)
-    assert np.all(uprior.distr.ub == np.inf)
+    if size == 0:
+        assert uprior is None
+    else:
+        assert uprior.prior_type == "direct_prior"
+        assert uprior.fun is None
+        assert isinstance(uprior.distr, limetr.stats.Uniform)
+        assert np.all(uprior.distr.lb == 0.0)
+        assert np.all(uprior.distr.ub == np.inf)
 
 
 def test_create_negative_uniform_direct_prior(size):
     uprior = utils.create_negative_uniform_direct_prior(size)
-    assert uprior.prior_type == "direct_prior"
-    assert uprior.fun is None
-    assert isinstance(uprior.distr, limetr.stats.Uniform)
-    assert np.all(uprior.distr.lb == -np.inf)
-    assert np.all(uprior.distr.ub == 0.0)
+    if size == 0:
+        assert uprior is None
+    else:
+        assert uprior.prior_type == "direct_prior"
+        assert uprior.fun is None
+        assert isinstance(uprior.distr, limetr.stats.Uniform)
+        assert np.all(uprior.distr.lb == -np.inf)
+        assert np.all(uprior.distr.ub == 0.0)
