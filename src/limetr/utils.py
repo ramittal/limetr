@@ -7,7 +7,7 @@
 """
 import numpy as np
 from . import linalg
-from . import distr
+from . import stats
 
 
 def create_linear_smooth_fun(mat):
@@ -23,22 +23,33 @@ def create_linear_smooth_fun(mat):
 def create_dummy_uniform_distr(size):
     lb = np.repeat(-np.inf, size)
     ub = np.repeat(np.inf, size)
-    return distr.Uniform(lb, ub)
+    return stats.Uniform(lb, ub)
 
 
 def create_dummy_gaussian_distr(size):
     mean = np.zeros(size)
     sd = np.repeat(np.inf, size)
-    return distr.Gaussian(mean, sd)
+    return stats.Gaussian(mean, sd)
 
 
 def create_positive_uniform_distr(size):
     lb = np.zeros(size)
     ub = np.repeat(np.inf, size)
-    return distr.Uniform(lb, ub)
+    return stats.Uniform(lb, ub)
 
 
 def create_negative_uniform_distr(size):
     lb = np.repeat(-np.inf, size)
     ub = np.zeros(size)
-    return distr.Uniform(lb, ub)
+    return stats.Uniform(lb, ub)
+
+
+def create_positive_uniform_direct_prior(size):
+    udistr = create_positive_uniform_distr(size)
+    return stats.Prior(udistr, fun=None)
+
+
+def create_negative_uniform_direct_prior(size):
+    udistr = create_negative_uniform_distr(size)
+    return stats.Prior(udistr, fun=None)
+
