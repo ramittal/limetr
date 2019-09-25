@@ -41,3 +41,16 @@ class Uniform:
         assert self.lb.size == self.ub.size
         assert np.all(self.lb <= self.ub)
 
+
+class Prior:
+    def __init__(self, distr, fun=None):
+        self.distr = distr
+        self.fun = fun
+        if self.fun is None:
+            self.prior_type = "direct_prior"
+        else:
+            self.prior_type = "function_prior"
+
+    def check(self):
+        if self.prior_type == "function_prior":
+            assert self.fun.shape[0] == self.distr.size

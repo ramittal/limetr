@@ -54,6 +54,9 @@ class SmoothFunction:
             self.jac_type = 'jac_fun'
             self.jac = self.jac_fun
 
+    def __call__(self, x):
+        return self.fun(x)
+
     def check(self):
         """check the output dimension"""
         x = np.zeros(self.shape[1])

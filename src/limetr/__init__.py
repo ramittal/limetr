@@ -8,5 +8,5 @@
 """
 from .core import *
 from . import linalg
-from . import distr
+from . import stats
 from . import utils

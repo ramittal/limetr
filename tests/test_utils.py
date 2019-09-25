@@ -31,11 +31,11 @@ def mat(shape):
 
 
 def test_create_linear_smooth_fun(mat, vec):
-    sf = utils.create_linear_smooth_fun(mat)
-    sf.check()
-    assert sf.jac_type == "jac_mat"
-    assert np.all(sf.fun(vec) == mat.dot(vec))
-    assert np.all(sf.jac(vec) == mat)
+    fun = utils.create_linear_smooth_fun(mat)
+    fun.check()
+    assert fun.jac_type == "jac_mat"
+    assert np.all(fun(vec) == mat.dot(vec))
+    assert np.all(fun.jac(vec) == mat)
 
 
 def test_create_dummy_uniform_distr(size):
