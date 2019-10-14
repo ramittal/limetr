@@ -6,6 +6,7 @@
     Linear algebra class for limetr object
 """
 import numpy as np
+import limetr.linalgf as linalgf
 
 
 class LinearMap:
