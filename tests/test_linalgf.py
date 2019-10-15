@@ -6,6 +6,7 @@
     Test the linalgf module.
 """
 import numpy as np
+from scipy.linalg import block_diag
 import pytest
 import limetr.linalgf as linalgf
 
@@ -182,3 +183,31 @@ def test_izdiag(n, k):
     my_d = linalgf.izmat.izdiag(sum(n), nu, ns, nx, my_u, my_s**2)
 
     assert np.linalg.norm(my_d - tr_d) < 1e-8
+
+
+@pytest.mark.parametrize(("n", "k"),
+                         [([5, 2, 4], 3)])
+def test_izeig(n, k):
+    z_full = np.random.randn(np.sum(n), k)
+    z_list = np.split(z_full, np.cumsum(n)[:-1])
+
+    tr_d = np.hstack([
+        np.diag(np.eye(n[i]) + z_list[i].dot(z_list[i].T))
+        for i in range(len(n))
+    ])
+
+    ns = np.minimum(n, k)
+    nu = ns * n
+    nz = n
+
+    my_u = np.zeros(nu.sum())
+    my_s = np.zeros(ns.sum())
+
+    linalgf.izmat.lsvd(nz, nu, ns, z_full, my_u, my_s)
+    my_eig_val = linalgf.izmat.izeig(sum(n), n, ns, my_s**2)
+    tr_eig_val, tr_eig_vec = np.linalg.eig(block_diag(*[
+        np.eye(n[i]) + z_list[i].dot(z_list[i].T)
+        for i in range(len(n))
+    ]))
+
+    assert np.linalg.norm(my_eig_val - tr_eig_val)

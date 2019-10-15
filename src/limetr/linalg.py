@@ -100,7 +100,7 @@ class VarMat:
         linalgf.izmat.lsvd(self.group_sizes,
                            self.scaled_z_nu,
                            self.scaled_z_ns,
-                           self.re_mat,
+                           self.scaled_z,
                            self.scaled_z_u,
                            self.scaled_z_s)
 
@@ -111,8 +111,8 @@ class VarMat:
         self.scaled_z_s2 = self.scaled_z_s**2
         self.scaled_inv_z_s2 = 1.0/(1.0 + self.scaled_z_s2) - 1.0
 
-        self.scaled_iz_e = linalgf.izmat.izeig(self.group_sizes,
-                                               self.num_obs,
+        self.scaled_iz_e = linalgf.izmat.izeig(self.num_obs,
+                                               self.group_sizes,
                                                self.scaled_z_ns,
                                                self.scaled_z_s2)
 
@@ -136,7 +136,7 @@ class VarMat:
 
         diag_blocks = [
             np.diag(obs_sd_list[i]**2) +
-            (re_mat_list[i].T*self.gamma).dot(re_mat_list[i])
+            (re_mat_list[i]*self.gamma).dot(re_mat_list[i].T)
             for i in range(self.num_groups)
         ]
 
@@ -153,7 +153,7 @@ class VarMat:
 
         diag_blocks = [
             np.linalg.inv(np.diag(obs_sd_list[i] ** 2) +
-                          (re_mat_list[i].T * self.gamma).dot(re_mat_list[i]))
+                          (re_mat_list[i] * self.gamma).dot(re_mat_list[i].T))
             for i in range(self.num_groups)
         ]
 
