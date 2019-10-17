@@ -20,51 +20,17 @@ def create_linear_smooth_fun(mat):
                                  jac_mat=lambda x: mat)
 
 
-def create_dummy_uniform_distr(size):
+def create_positive_uniform_dparams(size):
     assert isinstance(size, int)
     assert size >= 0
-    lb = np.repeat(-np.inf, size)
-    ub = np.repeat(np.inf, size)
-    return stats.Uniform(lb, ub)
+    dparams = np.array([[0.0]*size,
+                        [np.inf]*size])
+    return dparams
 
 
-def create_dummy_gaussian_distr(size):
+def create_negative_uniform_dparams(size):
     assert isinstance(size, int)
     assert size >= 0
-    mean = np.zeros(size)
-    sd = np.repeat(np.inf, size)
-    return stats.Gaussian(mean, sd)
-
-
-def create_positive_uniform_distr(size):
-    assert isinstance(size, int)
-    assert size >= 0
-    lb = np.zeros(size)
-    ub = np.repeat(np.inf, size)
-    return stats.Uniform(lb, ub)
-
-
-def create_negative_uniform_distr(size):
-    assert isinstance(size, int)
-    assert size >= 0
-    lb = np.repeat(-np.inf, size)
-    ub = np.zeros(size)
-    return stats.Uniform(lb, ub)
-
-
-def create_positive_uniform_direct_prior(size):
-    assert isinstance(size, int)
-    assert size >= 0
-    if size == 0:
-        return None
-    udistr = create_positive_uniform_distr(size)
-    return stats.Prior(udistr, fun=None)
-
-
-def create_negative_uniform_direct_prior(size):
-    assert isinstance(size, int)
-    assert size >= 0
-    if size == 0:
-        return None
-    udistr = create_negative_uniform_distr(size)
-    return stats.Prior(udistr, fun=None)
+    dparams = np.array([[-np.inf]*size,
+                        [0.0]*size])
+    return dparams

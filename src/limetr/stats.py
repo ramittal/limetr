@@ -1,56 +1,47 @@
 # -*- coding: utf-8 -*-
 """
-    limetr.distr
+    limetr.stats
     ~~~~~~~~~~~~
 
-    Distribution class for limetr object.
+    Statistical module for limetr object.
 """
 import numpy as np
+from . import linalg
 
 
-distr_list = [
-    "Gaussian",
-    "Uniform",
+dtype_list = [
+    "gaussian",
+    "uniform",
+]
+
+ptype_list = [
+    "direct_prior",
+    "function_prior"
 ]
 
 
-class Gaussian:
-    def __init__(self, mean, sd):
-        self.mean = mean
-        self.sd = sd
-        self.size = mean.size
-
-    def check(self):
-        assert type(self.mean) == np.ndarray
-        assert type(self.sd) == np.ndarray
-        assert self.mean.size == self.sd.size
-        assert self.mean.ndim == 1
-        assert self.sd.ndim == 1
-        assert np.all(self.sd >= 0.0)
-
-
-class Uniform:
-    def __init__(self, lb, ub):
-        self.lb = lb
-        self.ub = ub
-        self.size = lb.size
-
-    def check(self):
-        assert type(self.lb) == np.ndarray
-        assert type(self.ub) == np.ndarray
-        assert self.lb.size == self.ub.size
-        assert np.all(self.lb <= self.ub)
-
-
 class Prior:
-    def __init__(self, distr, fun=None):
-        self.distr = distr
+    def __init__(self, ptype, dtype, dparams, fun=None):
+        self.ptype = ptype
+        self.dtype = dtype
+        self.dparams = dparams
         self.fun = fun
-        if self.fun is None:
-            self.prior_type = "direct_prior"
-        else:
-            self.prior_type = "function_prior"
+
+        self.check()
 
     def check(self):
-        if self.prior_type == "function_prior":
-            assert self.fun.shape[0] == self.distr.size
+        # check distribution
+        assert isinstance(self.dparams, np.ndarray)
+        assert self.dparams.ndim == 2
+        assert self.dparams.shape[0] == 2
+        assert self.dtype in dtype_list
+        if self.dtype == "gaussian":
+            assert np.all(self.dparams[1] > 0.0)
+        if self.dtype == "uniform":
+            assert np.all(self.dparams[0] <= self.dparams[1])
+
+        # check prior
+        assert self.ptype in ptype_list
+        if self.ptype == "function_prior":
+            assert isinstance(self.fun, linalg.SmoothFunction)
+            assert self.fun.shape[0] == self.dparams.shape[1]
