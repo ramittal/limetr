@@ -8,6 +8,7 @@
 import numpy as np
 from . import linalg
 from . import utils
+from . import stats
 
 
 class LimeTr:
@@ -52,26 +53,23 @@ class LimeTr:
 
         self.check_input_dim()
 
-        # specify default prior
-        self.prior_types = [
-            "uniform_direct_prior",
-            "uniform_function_prior",
-            "gaussian_direct_prior",
-            "gaussian_function_prior",
-        ]
-        self.num_prior_types = len(self.prior_types)
-        self.prior_type_index = {
-            self.prior_types[i]: i
-            for i in range(self.num_prior_types)
-        }
-
-        self.beta_priors = [None]*self.num_prior_types
-        self.gamma_priors = [
-            utils.create_positive_uniform_direct_prior(self.dim_gamma),
-            None, None, None]
-        self.delta_priors = [
-            utils.create_positive_uniform_direct_prior(self.dim_delta),
-            None, None, None]
+        # create default prior
+        self.beta_priors = []
+        self.gamma_priors = [stats.Prior(
+            "direct_prior",
+            "uniform",
+            utils.create_positive_uniform_dparams(self.dim_gamma),
+            name="default prior"
+        )]
+        if self.dim_delta == 0:
+            self.delta_priors = []
+        else:
+            self.delta_priors = [stats.Prior(
+                "direct_prior",
+                "uniform",
+                utils.create_positive_uniform_dparams(self.dim_delta),
+                name="default prior"
+            )]
 
     def check_input_type(self):
         assert isinstance(self.obs_mean, np.ndarray)

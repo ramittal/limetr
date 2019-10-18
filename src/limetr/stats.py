@@ -21,11 +21,14 @@ ptype_list = [
 
 
 class Prior:
-    def __init__(self, ptype, dtype, dparams, fun=None):
+    def __init__(self, ptype, dtype, dparams, fun=None, name=""):
         self.ptype = ptype
         self.dtype = dtype
         self.dparams = dparams
         self.fun = fun
+        self.name = name
+        if self.name is None:
+            self.name = ""
 
         self.check()
 
@@ -45,3 +48,6 @@ class Prior:
         if self.ptype == "function_prior":
             assert isinstance(self.fun, linalg.SmoothFunction)
             assert self.fun.shape[0] == self.dparams.shape[1]
+
+        # check name
+        assert isinstance(self.name, str)

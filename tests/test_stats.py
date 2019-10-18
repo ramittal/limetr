@@ -26,6 +26,7 @@ smooth_fun = linalg.SmoothFunction(shape,
 @pytest.mark.parametrize(("ptype", "fun"),
                          [("direct_prior", None),
                           ("function_prior", smooth_fun)])
-def test_prior(ptype, dtype, dparams, fun):
-    prior = stats.Prior(ptype, dtype, dparams, fun)
+@pytest.mark.parametrize("name", [None, "", "test prior"])
+def test_prior(ptype, dtype, dparams, fun, name):
+    prior = stats.Prior(ptype, dtype, dparams, fun=fun, name=name)
     prior.check()
