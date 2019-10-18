@@ -31,6 +31,18 @@ true_obs_err = np.random.randn(num_obs)*true_obs_sd
 obs_mean = fe_fun(true_beta) + np.sum(re_mat*true_re, axis=1) + true_obs_err
 
 
+@pytest.mark.parametrize("name", ["beta", None])
+@pytest.mark.parametrize("size", [2, 5])
+def test_core_variable(name, size):
+    variable = core.LimeTrVariable(size, name=name)
+    assert variable.values is None
+    assert variable.priors is None
+
+    values = np.random.randn(size)
+    variable.set_values(values)
+    assert np.all(variable.values == values)
+
+
 @pytest.mark.parametrize("obs_sd", [None, true_obs_sd])
 @pytest.mark.parametrize("share_obs_sd", [True, False])
 @pytest.mark.parametrize("group_sizes", [None, true_group_sizes])
@@ -52,16 +64,28 @@ def test_core_init(obs_sd, share_obs_sd, group_sizes, inlier_pct):
 
     if obs_sd is None:
         if share_obs_sd:
-            assert lt.dim_delta == 1
+            assert lt.variables["delta"].size == 1
         else:
-            assert lt.dim_delta == lt.num_groups
+            assert lt.variables["delta"].size == lt.num_groups
     else:
-        assert lt.dim_delta == 0
+        assert "delta" not in lt.variables.keys()
         assert np.all(lt.obs_sd == obs_sd)
 
-    assert len(lt.beta_priors) == 0
-    assert len(lt.gamma_priors) == 1
-    if lt.dim_delta == 0:
-        assert len(lt.delta_priors) == 0
-    else:
-        assert len(lt.delta_priors) == 1
+    assert lt.variables["beta"].priors is None
+    assert len(lt.variables["gamma"].priors) == 1
+    if obs_sd is None:
+        assert len(lt.variables["delta"].priors) == 1
+
+
+@pytest.fixture()
+def lt():
+    return core.LimeTr(obs_mean,
+                       fe_fun,
+                       re_mat,
+                       obs_sd=true_obs_sd,
+                       share_obs_sd=False,
+                       group_sizes=true_group_sizes,
+                       inlier_pct=1.0)
+
+
+
