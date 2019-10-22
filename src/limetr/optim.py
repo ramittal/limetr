@@ -125,7 +125,10 @@ class OptimizationSolver:
 
         return g
 
-    def initialize_inner_vars(self):
+    def initialize_inner_vars(self, x_init=None):
+        if x_init is not None:
+            assert x_init.size == self.k
+            return x_init
         # initialize gamma
         gamma_init = np.repeat(0.1, self.k_gamma)
         # initialize beta
@@ -198,12 +201,43 @@ class OptimizationSolver:
 
         # update observation standard deviation
         if self.estimate_s:
-            u = self.compute_u(beta_soln, gamma_soln)
+            u = self.estimate_u(beta_soln, gamma_soln)
             r = self.y - self.f(beta_soln) -\
                 np.sum(self.z*np.repeat(u, self.n, axis=0), axis=1)
             self.s = np.std(r)
 
-    def compute_u(self, beta, gamma):
+    def optimize(self,
+                 x_init=None,
+                 w_init=None,
+                 s_init=None,
+                 inner_solver_options=None,
+                 outer_solver_options=None):
+        x = self.initialize_inner_vars(x_init=x_init)
+        self.initialize_outer_vars(w_init=w_init, s_init=s_init)
+
+        iter_count = 0
+        err = outer_solver_options["tol"]
+        obj = self.objective(x)
+        while err >= outer_solver_options["tol"]:
+            x = self.optimize_inner_vars(x, inner_solver_options)
+            self.optimize_outer_vars(x, outer_solver_options)
+
+            # update err and obj
+            obj_new = self.objective(x)
+            err = np.abs(obj_new - obj)/np.abs(obj)
+
+            # update iteration information
+            iter_count += 1
+            if iter_count >= outer_solver_options["max_iter"]:
+                print("reach maximum number of iterations.")
+                break
+
+        if self.estimate_s:
+            return x, self.w, self.s
+        else:
+            return x, self.w
+
+    def estimate_u(self, beta, gamma):
         r = self.compute_r(beta)
         inv_s2_z = self.z/(self.s**2).reshape(self.N, 1)
         inv_gamma = 1.0/gamma
