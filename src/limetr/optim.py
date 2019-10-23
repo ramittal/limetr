@@ -136,17 +136,19 @@ class OptimizationSolver:
         # initialize beta
         beta_ones = np.ones(self.k_beta)
         v = self.compute_v(gamma_init)
-        jf = self.f.jac(beta_ones)
+        y = self.y*np.sqrt(self.w)
+        jf = (self.f.jac(beta_ones).T*np.sqrt(self.w)).T
 
         mat = jf.T.dot(v.inv_dot(jf))/self.h
-        rhs = jf.T.dot(v.inv_dot(self.y))/self.h
+        rhs = jf.T.dot(v.inv_dot(y))/self.h
 
         if self.use_q:
-            mat += np.diag(self.qw)
-            rhs += self.qw*self.qm
+            mat += np.diag(self.qw[self.idx_beta])
+            rhs += self.qw[self.idx_beta]*self.qm[self.idx_beta]
 
         if self.use_p:
-            jpf = self.pf.jac(beta_ones)
+            jpf = self.pf.jac(np.hstack((beta_ones, gamma_init)))
+            jpf = jpf[:, self.idx_beta]
             mat += (jpf.T*self.pw).dot(jpf)
             rhs += (jpf.T*self.pw).dot(self.pm)
 

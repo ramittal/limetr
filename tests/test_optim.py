@@ -121,3 +121,18 @@ def test_optimization_solver_gradient(opt_solver):
     my_grad = opt_solver.gradient(x)
 
     assert np.linalg.norm(my_grad - grad) < 1e-10
+
+
+@pytest.mark.parametrize("x_init",
+                         [np.ones(4), None])
+def test_optimization_solver_initialize_inner_vars(opt_solver, x_init):
+    my_x_init = opt_solver.initialize_inner_vars(x_init=x_init)
+    if x_init is not None:
+        assert np.linalg.norm(my_x_init - x_init) < 1e-10
+    else:
+        beta_init, gamma_init = opt_solver.unpack_x(my_x_init)
+        grad = true_gradient(my_x_init, opt_solver)
+        grad_beta, grad_gamma = opt_solver.unpack_x(grad)
+
+        assert np.linalg.norm(grad_beta) < 1e-10
+        assert np.linalg.norm(gamma_init - 0.1) < 1e-10
