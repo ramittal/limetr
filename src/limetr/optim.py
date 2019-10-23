@@ -17,7 +17,7 @@ class OptimizationSolver:
                  qm=None, qw=None,
                  cf=None, cl=None, cu=None,
                  pf=None, pm=None, pw=None,
-                 p=1.0):
+                 inlier_pct=1.0):
         # pass in data
         self.n = n
         self.y = y
@@ -52,7 +52,6 @@ class OptimizationSolver:
             self.cl = []
             self.cu = []
 
-
         self.pf = pf
         self.pm = pm
         self.pw = pw
@@ -79,9 +78,9 @@ class OptimizationSolver:
         self.N = sum(self.n)
 
         # trimming settings
-        self.h = int(p*self.N)
-        self.p = self.h/self.N
-        self.w = np.repeat(self.p, self.N)
+        self.h = int(inlier_pct*self.N)
+        self.inlier_pct = self.h/self.N
+        self.w = np.repeat(self.inlier_pct, self.N)
 
     def objective(self, x):
         beta, gamma = self.unpack_x(x)
@@ -103,14 +102,17 @@ class OptimizationSolver:
         beta, gamma = self.unpack_x(x)
         r = self.compute_r(beta)
         v = self.compute_v(gamma)
+        z = (self.z.T*np.sqrt(self.w)).T
+        jf = (self.f.jac(beta).T*np.sqrt(self.w)).T
+
         inv_v_r = v.inv_dot(r)
-        inv_v_z = v.inv_dot(self.z)
+        inv_v_z = v.inv_dot(z)
 
         # gradient for beta
-        g_beta = -self.f.jac(beta).T.dot(inv_v_r)/self.h
+        g_beta = -jf.T.dot(inv_v_r)/self.h
 
         # gradient for gamma
-        g_gamma = 0.5*(np.sum(self.z*inv_v_z, axis=0) -
+        g_gamma = 0.5*(np.sum(z*inv_v_z, axis=0) -
                        np.sum(np.add.reduceat(inv_v_z.T*r,
                                               self.idx_split,
                                               axis=1)**2, axis=1))/self.h
@@ -261,11 +263,11 @@ class OptimizationSolver:
         return beta, gamma
 
     def compute_r(self, beta):
-        return (self.y - self.f(beta))*self.w
+        return (self.y - self.f(beta))*np.sqrt(self.w)
 
     def compute_v(self, gamma):
         return linalg.VarMat(self.s**self.w,
-                             self.z*self.w.reshape(self.N, 1),
+                             (self.z.T*np.sqrt(self.w)).T,
                              gamma,
                              self.n)
 

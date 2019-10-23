@@ -10,3 +10,4 @@ from .core import *
 from . import linalg
 from . import stats
 from . import utils
+from . import optim

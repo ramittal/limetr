@@ -90,8 +90,7 @@ class VarMat:
         self.check_input()
 
         # convert to izmat format
-        self.scaled_z = ((self.re_mat*np.sqrt(self.gamma))/
-                         self.obs_sd.reshape(self.num_obs, 1))
+        self.scaled_z = ((self.re_mat*np.sqrt(self.gamma.real)).T/self.obs_sd).T
         # lsvd of izmat
         self.scaled_z_ns = np.minimum(self.group_sizes, self.dim_gamma)
         self.scaled_z_nu = self.group_sizes*self.scaled_z_ns
@@ -130,9 +129,9 @@ class VarMat:
         """
         naive implementation of the varmat
         """
-        split_idx = np.cumsum(self.group_sizes)[:-1]
-        obs_sd_list = np.split(self.obs_sd, split_idx)
-        re_mat_list = np.split(self.re_mat, split_idx, axis=0)
+        idx_split = np.cumsum(self.group_sizes)[:-1]
+        obs_sd_list = np.split(self.obs_sd, idx_split)
+        re_mat_list = np.split(self.re_mat, idx_split, axis=0)
 
         diag_blocks = [
             np.diag(obs_sd_list[i]**2) +
@@ -147,9 +146,9 @@ class VarMat:
         """
         naive implementation of the inverse varmat
         """
-        split_idx = np.cumsum(self.group_sizes)[:-1]
-        obs_sd_list = np.split(self.obs_sd, split_idx)
-        re_mat_list = np.split(self.re_mat, split_idx, axis=0)
+        idx_split = np.cumsum(self.group_sizes)[:-1]
+        obs_sd_list = np.split(self.obs_sd, idx_split)
+        re_mat_list = np.split(self.re_mat, idx_split, axis=0)
 
         diag_blocks = [
             np.linalg.inv(np.diag(obs_sd_list[i] ** 2) +

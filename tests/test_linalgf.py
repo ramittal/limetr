@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     tests.linalgf
-    ~~~~~~~~~~~
+    ~~~~~~~~~~~~~
 
     Test the linalgf module.
 """
