@@ -1,8 +1,8 @@
 """
-    model
-    ~~~~~
+    core
+    ~~~~
 
-    Main model module.
+    Main LimeTr class.
 """
 # nonlinear mixed effects model
 import numpy as np
