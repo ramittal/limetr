@@ -1,5 +1,6 @@
 language: python
 os: linux
+dist: xenial
 
 jobs:
   name: "Conda/ Python Linux"
@@ -23,10 +24,8 @@ install:
   - make build
   - make install
 
-dist:
-  - make sdist
-  - make package
-
 script:
   - make tests
+  - make sdist
+  - make package
 
