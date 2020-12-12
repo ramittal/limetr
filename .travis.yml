@@ -1,5 +1,4 @@
 language: python
-sudo: false
 os: linux
 
 jobs:
@@ -24,8 +23,10 @@ install:
   - make build
   - make install
 
-script:
-  - make tests
+dist:
   - make sdist
   - make package
+
+script:
+  - make tests
 
