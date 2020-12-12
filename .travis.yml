@@ -1,14 +1,11 @@
 language: python
 sudo: false
-
-os:
-  - linux
+os: linux
 
 jobs:
-  include:
-    - name: "Conda/ Python Linux"
-    python: 3.7
-    env: NUMPY_VER=1.19.1 scipy=1.5.2 cyipopt
+  name: "Conda/ Python Linux"
+  python: 3.7
+  env: NUMPY_VER=1.19.1 scipy=1.5.2 cyipopt
 
 before_install:
   # Here we just install Miniconda, which you shouldn't have to change.
