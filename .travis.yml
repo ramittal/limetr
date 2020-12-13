@@ -14,7 +14,11 @@ before_install:
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda2/bin:$PATH
   - conda update --yes conda
+  - conda remove --yes conda-build conda-verify
+  - conda install --yes -c defaults -c conda-forge conda-build
+  - conda install --yes -c defaults -c conda-forge conda-verify
   - conda install --yes -c defaults -c conda-forge conda-build conda-verify
+  - conda update --yes conda
 
 install:
   # We just set up a conda environment with the right Python version. This
