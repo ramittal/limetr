@@ -35,7 +35,7 @@ package: src/limetr/Makefile src/limetr/special_mat.f90 src/limetr/utils.py
 	@echo "### Ensure version number in $(CONDA_PKG_DIR) matches with version in setup.py"
 	@echo "Currently only tested for linux"
 	@echo "Installing conda pre-requirements"
-	@conda install --yes --strict-channel-priority -c conda-forge -c defaults --file "../../conda_pre_requirements.txt"
+	@conda install --yes --strict-channel-priority -c conda-forge -c defaults conda-build conda-verify
 	@echo "Installing additional conda dependencies"
 	@conda install --yes --strict-channel-priority -c conda-forge -c defaults numpy==1.19.1 scipy==1.5.2 cyipopt
 	@echo "Building conda package for limetr (from $(CONDA_PKG_DIR) folder)"
