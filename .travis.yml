@@ -5,7 +5,7 @@ dist: xenial
 jobs:
   name: "Conda/ Python Linux"
   python: 3.7
-  env: numpy=1.19.1 scipy=1.5.2 cyipopt
+  # env: no env. variables needed
 
 before_install:
   # Here we just install Miniconda, which you shouldn't have to change.
@@ -14,14 +14,15 @@ before_install:
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda3/bin:$PATH
   - conda update --yes conda
-  - conda install --yes -c defaults -c conda-forge conda-build conda-verify
-  - conda install --yes -c conda-forge -c defaults numpy==1.19.1 scipy==1.5.2 cyipopt
-  - conda update --yes conda
 
 install:
   # We just set up a conda environment with the right Python version.
   - conda create --yes -n limetr_conda python=$TRAVIS_PYTHON_VERSION
   - source activate limetr_conda
+  - conda env list
+  - conda install --yes -c defaults -c conda-forge conda-build conda-verify
+  - conda install --yes -c conda-forge -c defaults numpy==1.19.1 scipy==1.5.2 cyipopt
+  - conda update --yes conda
   - which python
   - python --version
   - which conda
